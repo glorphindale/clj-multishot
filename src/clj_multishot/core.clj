@@ -1,10 +1,10 @@
 (ns clj-multishot.core
   (:gen-class)
   (:require [clj-http.client :as client]
-            [ring.adapter.jetty :as jetty]))
+            [ring.adapter.jetty :as jetty]
+            [clojure.string :as string]))
 
-(def downstreams
-  ["http://localhost:8090" "http://localhost:8091"])
+(def downstreams-list)
 
 (defn forward-request
   "take a Ring-compatible request map, forward it to the specified server
@@ -22,9 +22,18 @@
 (defn app [inc-req]
   (let [req (assoc inc-req :body (slurp (:body inc-req)))]
     (println "Received request" (:uri req) (:query-string req))
-    (doseq [downstream (rest downstreams)]
+    (doseq [downstream (rest downstreams-list)]
       (future (forward-request req downstream)))
-    (forward-request req (first downstreams))))
+    (forward-request req (first downstreams-list))))
 
-(defn -main []
-    (jetty/run-jetty app {:port 8080}))
+(defn parse-downstreams [raw]
+  (map #(str "http://" %) (string/split raw #",")))
+
+(defn -main [& {port "-port"
+                downstreams "-downstreams"
+                :or {port 8080
+                     downstreams "localhost:8090"}}]
+  (println "Use '-port 8080' option to specify port and '-downstreams server1:port,server2:port' to specify downstream servers")
+  (println "Running on port" port "with downstreams:" downstreams)
+  (with-redefs [downstreams-list (parse-downstreams downstreams)]
+    (jetty/run-jetty app {:port (Integer. port)})))
