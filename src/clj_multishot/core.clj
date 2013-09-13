@@ -7,10 +7,11 @@
   "http://localhost:8090")
 
 (defn forward-request [req server]
-  (let [{:keys [uri request-method query-string]} req
+  (let [{:keys [uri request-method query-string body]} req
         full-url (str server uri (#(if % (str "&" %)) query-string))
         result (client/request {:method request-method
-                                :url full-url})]
+                                :url full-url
+                                :body body})]
     result))
 
 (defn app [req]
