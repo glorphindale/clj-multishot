@@ -27,6 +27,6 @@ Or run in development mode with live reloading
 
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 glorphindale
 
 Distributed under the Eclipse Public License, the same as Clojure.
