@@ -19,11 +19,12 @@
                      :headers (dissoc headers "content-length")
                      :body body})))
 
-(defn app [req]
-  (println "Received request")
-  (doseq [downstream (rest downstreams)]
-    (future (forward-request req downstream)))
-  (forward-request req (first downstreams)))
+(defn app [inc-req]
+  (let [req (assoc inc-req :body (slurp (:body inc-req)))]
+    (println "Received request" (:uri req) (:query-string req))
+    (doseq [downstream (rest downstreams)]
+      (future (forward-request req downstream)))
+    (forward-request req (first downstreams))))
 
 (defn -main []
     (jetty/run-jetty app {:port 8080}))
