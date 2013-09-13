@@ -3,8 +3,8 @@
   (:require [clj-http.client :as client]
             [ring.adapter.jetty :as jetty]))
 
-(def downstream
-  "http://localhost:8090")
+(def downstreams
+  ["http://localhost:8090" "http://localhost:8091"])
 
 (defn forward-request [req server]
   (let [{:keys [uri request-method headers query-string body]} req
@@ -18,12 +18,15 @@
     result))
 
 (defn app [req]
-  (let [result (forward-request req downstream)]
-    (println "Request" req)
-    (println "Result" result)
+  (println "Received request")
+  (doseq [downstream (rest downstreams)]
+    (println "Sending to" downstream)
+    (future (forward-request req downstream)))
+
+  (let [result (forward-request req (first downstreams))]
     {:status 200
      :headers (:headers result)
-     :body (str (:body result))}))
+     :body (:body result)}))
 
 (defn -main []
     (jetty/run-jetty app {:port 8080}))
