@@ -24,7 +24,7 @@ class SimpleTests(unittest.TestCase):
         self.assertEqual(response.body["Body"], "<Empty>")
 
     def test_user_agent(self):
-        r = requests.get(TARGET + "/get", headers={"User-Agent": "My User Agent"})
+        r = requests.get(TARGET + "/get-agent", headers={"User-Agent": "My User Agent"})
         response = parse_reponse(r)
 
         self.assertEqual(response.code, 200)
@@ -32,11 +32,11 @@ class SimpleTests(unittest.TestCase):
                 response.body["Headers"] + "'")
 
     def test_get_query(self):
-        r = requests.post(TARGET + "/get?param1=val1&param2=val2")
+        r = requests.post(TARGET + "/get-query?param1=val1&param2=val2")
         response = parse_reponse(r)
 
         self.assertEqual(response.code, 200)
-        self.assertEqual(response.body["Request"], "/get?param1=val1&param2=val2")
+        self.assertEqual(response.body["Request"], "/get-query?param1=val1&param2=val2")
         self.assertEqual(response.body["Body"], "<Empty>")
 
     def test_post(self):
