@@ -36,7 +36,7 @@ class SimpleTests(unittest.TestCase):
         response = parse_reponse(r)
 
         self.assertEqual(response.code, 200)
-        self.assertEqual(response.body["Request"], "/get&param1=val1&param2=val2")
+        self.assertEqual(response.body["Request"], "/get?param1=val1&param2=val2")
         self.assertEqual(response.body["Body"], "<Empty>")
 
     def test_post(self):
