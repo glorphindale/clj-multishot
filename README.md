@@ -16,14 +16,14 @@ Run in standalone mode
     or
     $ lein run [args]
 
-Or run in development mode with live reloading
+Run in development mode with live reloading
 
     $ lein ring server 8080
 
-## Options
+## Args
 
-* -port to listen to
-* -downstreams is a comma-separated list of downstreams to send requests to
+* -port to listen to, default is 8080
+* -downstreams is a comma-separated list of downstreams to send requests to, default is localhost:8090
 
 ## License
 
